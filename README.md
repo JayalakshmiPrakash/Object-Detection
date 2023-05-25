@@ -26,11 +26,13 @@ This technique requires you to feed a very large number of smaller images of ove
 
 As the name suggests, a region-based approach works with a region proposal that extracts the important areas/regions from the image and performs feature extraction and classification on them. There are three types of region-based methods, which are as follows:
 
-RCNN
-Fast RCNN
-Faster RCNN
+1. RCNN
+2. Fast RCNN
+3. Faster RCNN
+
 
 **RCNN**
+
 How to deal with this problem using the RCNN algorithm.
 Instead of having thousands of input images fed into the feature extractor, RCNNs use region proposals. These regions are proposed using the selective search technique to extract different 2000 regions from the given image. 
 
@@ -49,7 +51,9 @@ However, this RCNN algorithm for object detection has certain limitations due to
 4. SVM used as classifiers do not produce highly accurate results.
 
 
+
 **Fast RCNN and Faster RCNN**
+
 In RCNN having 2,000 region proposals makes the algorithm slow. This problem can be solved by using Fast RCNN, which is a modified version of the RCNN algorithm.
 
 The Fast RCNN algorithm feeds the entire image as the input to the feature extractor, instead of feeding 2,000 region proposals. The feature extractor, CNN, then produces a feature map for the image from where the algorithm identifies the region proposals. This is done using a selective search method, similar to the one in RCNN.
@@ -62,7 +66,9 @@ Finally, the output of the pooling layer is fed to the fully connected layer, wh
 
 This solves the problem of having a large number of region proposals, which in turn saves a lot of time. However, in Fast RCNN, you are still using the selective search method, which does not learn and might light up incorrect region proposals, as in the case of RNN. Additionally, the selective search method slows down detection as it requires a lot of time. Even though the Fast-RCNN is faster than RCNN but it is not suitable for real-time applications due to its slow speed. This is one of the main limitations of the Fast RCNN technique.
 
+
 **Faster RCNN**
+
 The limitation for Fast RCNN of using **selective search to propose regions** can be overcome in Faster RCNN by using a **region proposal network (RPN) to select regions** from the given image. 
 
 The working of this algorithm is similar to that of the Fast RCNN algorithm. Additionally, Faster RCNN has one layer, which is the RPN. The feature map produced by the CNN is fed to the RPN. The RPN provides region proposals that are reshaped and fed into the RoI pooling layer. The last step is the same as it was in Fast RCNN, the output of the pooling layer is classified along with the bounding box vector. This solves the problems caused by using selective search techniques.
@@ -72,11 +78,13 @@ The architecture of Faster RCNN is illustrated below.
 
 Even though the Faster RCNN algorithm solves the problem of using selective search, it still cannot be used for some real-time applications due to certain limitations.
 
-**Region-based techniques have the following properties:**
+**In short Region-based techniques have the following properties:**
 
 These algorithms work on a two-stage approach:
-**Proposing different regions
-Processing these regions**
- 
+**1. Proposing different regions**
+**2. Processing these regions**
+
 The proposed regions, which have a high probability of the presence of the object, are processed. The object is then localised inside the image.
-Even after various advancements from RCNN to Faster RCNN, these methods are still not fast enough to deal with real-time problems. Hence, they are not used actively in the industry today. **There is another approach to solve this problem: One-shot detectors. **
+Even after various advancements from RCNN to Faster RCNN, these methods are still not fast enough to deal with real-time problems. Hence, they are not used actively in the industry today.
+
+**There is another approach to solve this problem: One-shot detectors.**************
