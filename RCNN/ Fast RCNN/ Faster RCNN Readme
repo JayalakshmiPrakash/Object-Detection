@@ -1,7 +1,6 @@
 # Object-Detection - RCNN/ Fast RCNN/ Faster RCNN
 
 
-
 **Object Detection Challenges:**
 FCN's cannot be used for object detection due various limitations.,which are as follows.,
 The length of the output layer in object detection task is unknown, as the number of objects/occurences is unknown and it varies. This unknown length of occurences cannot be handeled using FCN's
