@@ -1,16 +1,82 @@
-# Object-Detection
+# Object-Detection - RCNN/ Fast RCNN/ Faster RCNN
 
-Objection Detection can be categorised into 2 types
-1. Region based Detectors and 2. One shot Detectors
+
 
 **Object Detection Challenges:**
-FCN's are widely used in image classification.
-FCN's are challenged in object detection as the length of the output layer is a variable. This is because the number of ocvurences of the objects of interest are not fixed.
-The use of sliding window of stride 1 would slow down the operation
-So, one way of solving this would be to partition the input image into several regions and use a CNN to classify the presence of the object within each region.
+FCN's cannot be used for object detection due various limitations.,which are as follows.,
+The length of the output layer in object detection task is unknown, as the number of objects/occurences is unknown and it varies. This unknown length of occurences cannot be handeled using FCN's
+FCN's uses a sliding window with a stride of one which slows down the operation.
+Sliding windows slide through the image in rectangular steps of equal size to extract different areas from the entire image. This windowed image is then fed to feature extractors and classifiers in the case of FCNs. Using sliding windows to extract a subset of images that have to be fed to the feature extractor will give thousands of such images in that subset.
+Having thousands of these images being fed to the classifier will increase the time and memory requirement of the model, which is counterproductive. 
+**Therefore, using FCNs is not the most effective way to deal with object detection problems. **
+One alternative to deal with the limitations of FCNs is to divide the input image into smaller images and then feed them to the CNN, i.e., the classifier. This technique of slicing the input image into smaller images has its own disadvantages, which are as follows:
 
-**Drawbacks:**
-The objects of interest might have Different spatial locations within the image and different aspect ratios.
+The objects that are of importance may have different spatial locations within the image.
+The objects of interest will have different aspect ratios in the smaller images.
+This technique requires you to feed a very large number of smaller images of overlapping regions, which, even though reduces the time required for computation as compared to FCNs, still requires large computational resources.
 
-Thus leaking out of the pre-set regions. To improve this naive approach one would need to select a very large number of regions(overlapping) which would increase the computational overhead.
+**Therefore, either using FCNs or feeding multiple sub-images of the input image to the CNN is not suitable for real-time object detection problems.**
 
+
+**To solve this problem Objection Detection can be categorised into 2 types**
+
+1. Region based Detectors and 2. One shot Detectors
+
+1.REGION BASED DETECTORS/ALGORITHMS
+
+As the name suggests, a region-based approach works with a region proposal that extracts the important areas/regions from the image and performs feature extraction and classification on them. There are three types of region-based methods, which are as follows:
+
+RCNN
+Fast RCNN
+Faster RCNN
+
+**RCNN**
+How to deal with this problem using the RCNN algorithm.
+Instead of having thousands of input images fed into the feature extractor, RCNNs use region proposals. These regions are proposed using the selective search technique to extract different 2000 regions from the given image. 
+
+**The process of extracting region proposals occurs in three steps, which are as follows:**
+1. The algorithm calculates an initial picture sub-segmentation. This results in a large number of possible regions. 
+2. The algorithm recursively combines comparable sections into larger ones using the greedy approach.
+3. The algorithm proposes the final potential regions using these larger regions.
+
+These regions obtained are then warped and squared and finally fed into a CNN, which functions as a feature extractor. Once the features are extracted, they are fed into an SVM to verify the presence of objects in them. Additionally, the values of the bounding box vector are given as an output by this algorithm, as shown in the image below.
+![image](https://github.com/JayalakshmiPrakash/Object-Detection/assets/67649535/6778a140-60af-4023-800c-adf97b77ff1f)
+
+However, this RCNN algorithm for object detection has certain limitations due to which it is not actively used in the industry today. some of which are as follows:
+1. Having 2,000 region proposals per image being fed into the feature extractor requires a lot of time and resources, thereby making the process extremely slow.
+2. Even deployment is quite slow, which makes it difficult for one to use the algorithm for real-world applications.
+3. The selective search algorithm does not learn, which can lead to the generation of bad proposals.
+4. SVM used as classifiers do not produce highly accurate results.
+
+
+**Fast RCNN and Faster RCNN**
+In RCNN having 2,000 region proposals makes the algorithm slow. This problem can be solved by using Fast RCNN, which is a modified version of the RCNN algorithm.
+
+The Fast RCNN algorithm feeds the entire image as the input to the feature extractor, instead of feeding 2,000 region proposals. The feature extractor, CNN, then produces a feature map for the image from where the algorithm identifies the region proposals. This is done using a selective search method, similar to the one in RCNN.
+
+Each region proposed for a single image is of different shapes and sizes, therefore, there is a need to convert them to the same shape. Each of these region proposals is then wrapped into squares and transformed into the same shape using a region of interest (RoI) pooling layer.
+
+Finally, the output of the pooling layer is fed to the fully connected layer, which predicts the classes using the softmax layer and provides the bounding box coordinates for the object detected, as illustrated below.
+
+![image](https://github.com/JayalakshmiPrakash/Object-Detection/assets/67649535/a137e74c-ab7b-4c42-a1bf-84b5de9d70b3)
+
+This solves the problem of having a large number of region proposals, which in turn saves a lot of time. However, in Fast RCNN, you are still using the selective search method, which does not learn and might light up incorrect region proposals, as in the case of RNN. Additionally, the selective search method slows down detection as it requires a lot of time. Even though the Fast-RCNN is faster than RCNN but it is not suitable for real-time applications due to its slow speed. This is one of the main limitations of the Fast RCNN technique.
+
+**Faster RCNN**
+The limitation for Fast RCNN of using **selective search to propose regions** can be overcome in Faster RCNN by using a **region proposal network (RPN) to select regions** from the given image. 
+
+The working of this algorithm is similar to that of the Fast RCNN algorithm. Additionally, Faster RCNN has one layer, which is the RPN. The feature map produced by the CNN is fed to the RPN. The RPN provides region proposals that are reshaped and fed into the RoI pooling layer. The last step is the same as it was in Fast RCNN, the output of the pooling layer is classified along with the bounding box vector. This solves the problems caused by using selective search techniques.
+
+The architecture of Faster RCNN is illustrated below.
+![image](https://github.com/JayalakshmiPrakash/Object-Detection/assets/67649535/e2cef80a-92f3-463e-b6c3-f01bd01d60e8)
+
+Even though the Faster RCNN algorithm solves the problem of using selective search, it still cannot be used for some real-time applications due to certain limitations.
+
+**Region-based techniques have the following properties:**
+
+These algorithms work on a two-stage approach:
+**Proposing different regions
+Processing these regions**
+ 
+The proposed regions, which have a high probability of the presence of the object, are processed. The object is then localised inside the image.
+Even after various advancements from RCNN to Faster RCNN, these methods are still not fast enough to deal with real-time problems. Hence, they are not used actively in the industry today. **There is another approach to solve this problem: One-shot detectors. **
